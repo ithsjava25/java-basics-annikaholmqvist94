@@ -12,7 +12,7 @@ public class Main {
 
         ElpriserAPI elpriserAPI = new ElpriserAPI();
 
-        System.out.println("--- Fetching Data ---");
+        System.out.println("--- Hämtar Data ---");
         LocalDate today=LocalDate.now();
 
         List<ElpriserAPI.Elpris> dagensPris =
@@ -51,10 +51,44 @@ public class Main {
                 System.out.println(" ----------- ");
         }
 
-
-
-
         }
+
+        // NU ska vi hitta medelpriser för 24H, vi sätter den som en double.
+
+        double sum=0.0;
+        for (ElpriserAPI.Elpris elpris : dagensPris){
+            sum += elpris.sekPerKWh();
+        }
+
+        //dividera med antalet
+        double medelPris= sum/ dagensPris.size();
+        System.out.println(" ----------------- ");
+        System.out.println(" Medelpriset för idag är: " + medelPris + " kr/kWh");
+        
+        // hitta billigaste och dyraste timmen
+
+        double lägstaPris=dagensPris.getFirst().sekPerKWh();
+        double högstaPris=dagensPris.getFirst().sekPerKWh();
+        for (ElpriserAPI.Elpris elpris : dagensPris) {
+            double pris=elpris.sekPerKWh();
+
+            if(pris<lägstaPris){
+                lägstaPris=pris;
+            }
+            if(pris>högstaPris){
+                högstaPris=pris;
+            }
+            
+        }
+
+        System.out.println(" Lägsta priset idag är: " + lägstaPris + " kr/kWh ");
+        System.out.println(" Högsta priset idag är: " + högstaPris + " kr/kWh ");
+
+
+
+
+
+
 
 
 
