@@ -1,7 +1,14 @@
 package com.example;
 
+import com.example.api.ElpriserAPI;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
+
+
 
 public class Elpris {
     private LocalDate datum;
@@ -37,6 +44,8 @@ public class Elpris {
     public void setOmråde(String område) {
         this.område = område;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
