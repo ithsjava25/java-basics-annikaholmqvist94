@@ -225,22 +225,23 @@ public class Main {
         }
         //dividera med antalet
         double medelPris = sum / dagensPris.size();
-        String result = String.format(" Medelpriset för idag är %s kr/kWh", formatOre(medelPris));
+        String result = String.format(" Medelpriset för idag är %s öre/kWh", formatOre(medelPris));
         System.out.println(result);
     }
 
     private static void hittaBilligasteOchDyrasteTimme(List<ElpriserAPI.Elpris> dagensPris) {
         if (dagensPris == null || dagensPris.isEmpty()) return;
-        ElpriserAPI.Elpris förstaPris = dagensPris.get(0);
 
-        ElpriserAPI.Elpris lägsta=dagensPris.get(0);
+        final DateTimeFormatter hourFormatter=DateTimeFormatter.ofPattern("HH");
+
+        ElpriserAPI.Elpris lägsta = dagensPris.get(0);
         ElpriserAPI.Elpris högsta=dagensPris.get(0);
 
-        double lägstaPris = förstaPris.sekPerKWh();
-        LocalDateTime tidLägsta = förstaPris.timeStart().toLocalDateTime();
+        double lägstaPris = lägsta.sekPerKWh();
+        LocalDateTime tidLägsta = lägsta.timeStart().toLocalDateTime();
 
-        double högstaPris = förstaPris.sekPerKWh();
-        LocalDateTime tidHögsta = förstaPris.timeStart().toLocalDateTime();
+        double högstaPris = högsta.sekPerKWh();
+        LocalDateTime tidHögsta = högsta.timeStart().toLocalDateTime();
 
         for (int i = 1; i < dagensPris.size(); i++) {
             ElpriserAPI.Elpris elpris = dagensPris.get(i);
@@ -260,10 +261,14 @@ public class Main {
         }
 
 
-            System.out.println(" Lägsta priset idag är: " + formatOre(lägsta.sekPerKWh()) + " öre och det är klockan "
-                + lägsta.timeStart().toLocalTime().format(timeFormatter));
-            System.out.println(" Högsta priset idag är: " + formatOre(högsta.sekPerKWh()) + " öre och det är klockan "
-                + högsta.timeStart().toLocalTime().format(timeFormatter));
+
+            String intervallLägsta=lägsta.timeStart().toLocalTime().format(hourFormatter) + "-" + lägsta.timeEnd().toLocalTime().format(hourFormatter);
+            String intervallHögsta=högsta.timeStart().toLocalTime().format(hourFormatter) + "-" + högsta.timeEnd().toLocalTime().format(hourFormatter);;
+
+            System.out.println(" Lägsta priset idag är: " + formatOre(lägsta.sekPerKWh()) + " öre och det är i intervallet:  "
+                + intervallLägsta);
+            System.out.println(" Högsta priset idag är: " + formatOre(högsta.sekPerKWh()) + " öre och det är i intervallet:  "
+                + intervallHögsta);
 
         }
 
