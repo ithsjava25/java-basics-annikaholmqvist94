@@ -71,6 +71,7 @@ public class Main {
 
         } else {
             System.out.println("skriv help för kommando");
+            showHelp();
 
         }
     }
@@ -156,7 +157,7 @@ public class Main {
             }
         }
         if (totalPriser == null || totalPriser.isEmpty()) {
-            System.out.println("inga tillgängliga priser för " + currentDate + " i området " + currentZone);
+            System.out.println("inga priser för " + currentDate + " i området " + currentZone);
             return;
 
         }
@@ -184,6 +185,8 @@ public class Main {
     }
 
     private static void showHelp() {
+        System.out.println(" Användning (usage): java Main <kommando>");
+        System.out.println(" -----------------------------------------------------------------");
         System.out.println(" --zone SE1 | SE2 | SE3 | SE4   (Ange elområde)");
         System.out.println(" --date           (YYYY-MM-DD)");
         System.out.println(" --sorted         (sorterar priserna med dyraste först)");
@@ -276,7 +279,7 @@ public class Main {
         String bästSlutTid = null;
 
         //testa alla startindex
-        for (int i = 0; i < priser.size() - timmar; i++) {
+        for (int i = 0; i <= priser.size() - timmar; i++) {
             double sum = 0.0;
 
             for (int j = 0; j < timmar; j++) {
@@ -296,11 +299,11 @@ public class Main {
 
         }
         if (bästStartTid != null && bästSlutTid != null) {
-            System.out.println("billigaste " + timmar + " h- fönstret: "
-                    + bästStartTid + " - " +
-                    bästSlutTid);
-            String result = String.format(" | Snittpris %.3f kr /kWh", formatOre(lägstaMedel));
+            System.out.println("Påbörja laddning kl " + bästStartTid + " för att få det billigaste " + timmar + "h-fönstret");
+            String result = String.format(" Snittpris %s öre/kWh", formatOre(lägstaMedel));
             System.out.println(result);
+
+            System.out.println("Laddning slutar kl: " + bästSlutTid);
         }
 
 
