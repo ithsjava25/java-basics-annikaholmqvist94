@@ -64,8 +64,11 @@ public class Main {
                 chargingHour = params.chargingHour;
 
                 hanteraPrisvisning();
-            } catch (Exception e) {
-                System.out.println("fel , se hjälp");
+            } catch (IllegalArgumentException e) {
+                System.out.println("fel i argument" + e.getMessage());
+                showHelp();
+            } catch (IllegalStateException e){
+                System.out.println("Programfel: " + e.getMessage());
                 showHelp();
             }
 
@@ -94,7 +97,8 @@ public class Main {
                         try {
                             zone = ElpriserAPI.Prisklass.valueOf(args[i + 1].toUpperCase());
                             i++;
-                        }catch (IllegalArgumentException e){throw new IllegalArgumentException("ogiltigt elområde. VÄlj SE1, SE2, SE3, SE4.");
+                        }catch (IllegalArgumentException e)
+                        {throw new IllegalArgumentException("ogiltig zon. VÄlj SE1, SE2, SE3, SE4.");
                     }
                     }else {
                         throw new IllegalArgumentException("saknar värde för --zone");
@@ -106,7 +110,8 @@ public class Main {
                         try {
                             date = LocalDate.parse(args[i + 1]);
                             i++;
-                        }catch (DateTimeParseException e){throw new IllegalArgumentException("ogiltigt datumformat, använd YYY-MM-SS.");
+                        }catch (DateTimeParseException e)
+                        {throw new IllegalArgumentException("ogiltigt datumformat, använd YYY-MM-SS.");
                     }
                     }else {
                         throw new IllegalArgumentException("saknar värde för --date");
@@ -308,7 +313,7 @@ public class Main {
         }
         if (bästStartTid != null && bästSlutTid != null) {
             System.out.println("Påbörja laddning kl " + bästStartTid + " för att få det billigaste " + timmar + "h-fönstret");
-            String result = String.format(" Snittpris %s öre/kWh", formatOre(lägstaMedel));
+            String result = String.format(" Medelpris för fönster: %s öre/kWh", formatOre(lägstaMedel));
             System.out.println(result);
 
             System.out.println("Laddning slutar kl: " + bästSlutTid);
