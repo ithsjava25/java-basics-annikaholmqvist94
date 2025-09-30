@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -174,7 +175,7 @@ public class Main {
         } else {
 
             if (isSorted) {
-                priserForDisplay.sort((p1, p2) -> Double.compare(p2.sekPerKWh(), p1.sekPerKWh()));
+                priserForDisplay.sort(Comparator.comparingDouble(ElpriserAPI.Elpris::sekPerKWh));
             }
             visaPriser(priserForDisplay);
             System.out.println("--------------------------------------------------------");
@@ -206,12 +207,14 @@ public class Main {
     }
 
     private static void visaPriser(List<ElpriserAPI.Elpris> priser) {
+        final DateTimeFormatter hourFormatter=DateTimeFormatter.ofPattern("HH");
+
         if(!isSorted){
             System.out.println("\n----Timpriser------");
         }
         for (ElpriserAPI.Elpris elpris : priser) {
-            String startTId = elpris.timeStart().toLocalTime().format(timeFormatter);
-            String slutTid = elpris.timeEnd().toLocalTime().format(timeFormatter);
+            String startTId = elpris.timeStart().toLocalTime().format(hourFormatter);
+            String slutTid = elpris.timeEnd().toLocalTime().format(hourFormatter);
             String formateratPris = formatOre(elpris.sekPerKWh());
             System.out.println(startTId + "-" + slutTid + " " + formateratPris + " öre");
         }
