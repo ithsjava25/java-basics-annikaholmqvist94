@@ -25,20 +25,8 @@ public class Main {
 
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-    private static class programArguments {
-        final ElpriserAPI.Prisklass zone;
-        final LocalDate date;
-        final boolean sorted;
-        final Integer chargingHour;
-        final boolean showHelp;
-
-        programArguments(ElpriserAPI.Prisklass zone, LocalDate date, boolean sorted, Integer chargingHour, boolean showHelp) {
-            this.zone = zone;
-            this.date = date;
-            this.sorted = sorted;
-            this.chargingHour = chargingHour;
-            this.showHelp = showHelp;
-        }
+    private record programArguments(ElpriserAPI.Prisklass zone, LocalDate date, boolean sorted, Integer chargingHour,
+                                    boolean showHelp) {
     }
 
     public static void main(String[] args) {
@@ -129,7 +117,7 @@ public class Main {
                         if (hours == 2 || hours == 4 || hours == 8) {
                             chargingHour = hours;
                         } else {
-                            throw new IllegalArgumentException("ogilitg period, välj 2 h, 4h eller 8h. ");
+                            throw new IllegalArgumentException("ogiltig period, välj 2 h, 4h eller 8h. ");
                         }
                         i++;
                     } else {
@@ -206,7 +194,7 @@ public class Main {
     private static String formatOre(double sekPerKWh) {
 
         double ore = sekPerKWh * 100.0;
-        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(new Locale("sv", "SE"));
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.of("sv", "SE"));
         DecimalFormat df = new DecimalFormat("0.00", symbols);
         return df.format(ore);
     }
@@ -242,8 +230,8 @@ public class Main {
 
         final DateTimeFormatter hourFormatter=DateTimeFormatter.ofPattern("HH");
 
-        ElpriserAPI.Elpris lägsta = dagensPris.get(0);
-        ElpriserAPI.Elpris högsta=dagensPris.get(0);
+        ElpriserAPI.Elpris lägsta = dagensPris.getFirst();
+        ElpriserAPI.Elpris högsta=dagensPris.getFirst();
 
         double lägstaPris = lägsta.sekPerKWh();
         LocalDateTime tidLägsta = lägsta.timeStart().toLocalDateTime();
@@ -311,13 +299,13 @@ public class Main {
 
 
         }
-        if (bästStartTid != null && bästSlutTid != null) {
+
             System.out.println("Påbörja laddning kl " + bästStartTid + " för att få det billigaste " + timmar + "h-fönstret");
             String result = String.format(" Medelpris för fönster: %s öre/kWh", formatOre(lägstaMedel));
             System.out.println(result);
 
             System.out.println("Laddning slutar kl: " + bästSlutTid);
-        }
+
 
 
     }
