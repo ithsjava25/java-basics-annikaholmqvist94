@@ -32,7 +32,7 @@ public final class ElpriserAPI {
     private final boolean cachingEnabled;
     
     // Ett enkelt minnes-cache. Nyckeln är en kombination av datum och prisklass, t.ex. "2025-08-30_SE3"
-    private final Map<String, List<Elpris>> inMemoryCache;
+    private static final Map<String, List<Elpris>> inMemoryCache=new ConcurrentHashMap<>();
 
     /**
      * En record som representerar ett enskilt elpris för en given tidsperiod.
@@ -88,10 +88,12 @@ public final class ElpriserAPI {
      * FOR TESTS ONLY: Clears the mock response, causing the API to resume
      * making real network requests. This should be called after each test.
      */
-    public static void clearMockResponse() {
+    public static void clearStaticState() {
         mockResponseSupplier = null;
         datedMockResponses.clear();
+        inMemoryCache.clear();
     }
+
     // --- End of test fields ---
 
     /**
@@ -111,7 +113,6 @@ public final class ElpriserAPI {
                 .build();
         this.cachingEnabled = enableCaching;
         // ConcurrentHashMap är trådsäker om klassen skulle användas i flera trådar
-        this.inMemoryCache = new ConcurrentHashMap<>();
         System.out.println("ElpriserAPI initialiserat. Cachning: " + (enableCaching ? "På" : "Av"));
     }
 

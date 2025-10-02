@@ -32,7 +32,7 @@ class MainTest {
     @AfterEach
     void tearDown() {
         System.setOut(originalOut);
-        ElpriserAPI.clearMockResponse();
+        ElpriserAPI.clearStaticState();
     }
 
     @Test
