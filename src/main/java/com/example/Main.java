@@ -68,6 +68,7 @@ public class Main {
         }
     }
 
+
     private static programArguments parseArguments(String[] args) {
         ElpriserAPI.Prisklass zone = null;
         LocalDate date = null;
@@ -144,14 +145,18 @@ public class Main {
         List<ElpriserAPI.Elpris> totalPriser = dagensPriser;
 
         if (chargingHour != null && chargingHour > 0) {
+
+
             List<ElpriserAPI.Elpris> morgondagensPriser = elpriserAPI.getPriser(currentDate.plusDays(1), currentZone);
             if (morgondagensPriser != null) {
+
+           
                 totalPriser = new java.util.ArrayList<>(dagensPriser);
                 totalPriser.addAll(morgondagensPriser);
             }
         }
         if (totalPriser == null || totalPriser.isEmpty()) {
-            System.out.println("inga priser för " + currentDate + " i området " + currentZone);
+            System.out.println("inga priser tillgängliga");
             return;
 
         }
@@ -164,7 +169,10 @@ public class Main {
         }
 
         if (chargingHour != null) {
-            hittaBilligasteIntervallet(totalPriser, chargingHour);
+            int intervallMinuter=beräknaIntervalletIMinuter(totalPriser);
+
+            hittaBilligasteIntervallet(totalPriser,chargingHour,intervallMinuter);
+
         } else {
 
             if (isSorted) {
@@ -268,9 +276,28 @@ public class Main {
 
         }
 
-    public static void hittaBilligasteIntervallet(List<ElpriserAPI.Elpris> priser, int timmar) {
 
-        if (priser.size() < timmar) {
+    public static int beräknaIntervalletIMinuter(List<ElpriserAPI.Elpris> priser){
+        //vi vill göra ett sliding window för att ta reda på intervallet vi ska beräkan billigaste intervallet på.
+
+        if(priser==null || priser.size()< 2) {
+            return 60;
+        }
+
+        //skillnaden punkt 1,2
+        long minutes=java.time.Duration.between
+                (priser.getFirst().timeStart(),
+                priser.get(1).timeStart()).toMinutes();
+
+        return Math.toIntExact(minutes);
+    }
+
+    
+    public static void hittaBilligasteIntervallet(List<ElpriserAPI.Elpris> priser, int timmar, int intervallMinuter) {
+ //timmar*60 /intervallet är antaletpunkter
+        int antalPrispunkter=(timmar*60)/intervallMinuter;
+
+        if (priser.size() < antalPrispunkter) {
             System.out.println("inte tillräckligt många timmar för ett " + timmar + "hs fönster");
             return;
         }
@@ -280,20 +307,20 @@ public class Main {
         String bästSlutTid = null;
 
         //testa alla startindex
-        for (int i = 0; i <= priser.size() - timmar; i++) {
+        for (int i = 0; i <= priser.size() - antalPrispunkter; i++) {
             double sum = 0.0;
 
-            for (int j = 0; j < timmar; j++) {
+            for (int j = 0; j < antalPrispunkter; j++) {
                 sum = sum + priser.get(i + j).sekPerKWh();
 
             }
 
-            double medel = sum / timmar;
+            double medel = sum / antalPrispunkter;
 
             if (medel < lägstaMedel) {
                 lägstaMedel = medel;
                 bästStartTid = priser.get(i).timeStart().toLocalDateTime().format(timeFormatter);
-                bästSlutTid = priser.get(i + timmar - 1).timeEnd().toLocalDateTime().format(timeFormatter);
+                bästSlutTid = priser.get(i + antalPrispunkter - 1).timeEnd().toLocalDateTime().format(timeFormatter);
 
             }
 
