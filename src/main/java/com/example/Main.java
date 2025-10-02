@@ -156,7 +156,7 @@ public class Main {
             }
         }
         if (totalPriser == null || totalPriser.isEmpty()) {
-            System.out.println("inga priser tillgängliga");
+            System.out.println("inga priser");
             return;
 
         }
