@@ -62,7 +62,7 @@ public class Main {
 
 
         } else {
-            System.out.println("skriv help för kommando");
+            System.out.println("skriv hjälp för kommando");
             showHelp();
 
         }
@@ -148,24 +148,17 @@ public class Main {
 
 
             List<ElpriserAPI.Elpris> morgondagensPriser = elpriserAPI.getPriser(currentDate.plusDays(1), currentZone);
-            if (morgondagensPriser != null) {
+            if (!morgondagensPriser.isEmpty()) {
 
            
                 totalPriser = new java.util.ArrayList<>(dagensPriser);
                 totalPriser.addAll(morgondagensPriser);
             }
         }
-        if (totalPriser == null || totalPriser.isEmpty()) {
+        if (totalPriser.isEmpty()) {
             System.out.println("inga priser");
             return;
 
-        }
-
-        List<ElpriserAPI.Elpris> priserForDisplay=new java.util.ArrayList<>();
-        for(ElpriserAPI.Elpris elpris : totalPriser){
-            if (elpris.timeStart().toLocalDate().isEqual(currentDate)){
-                priserForDisplay.add(elpris);
-            }
         }
 
         if (chargingHour != null) {
@@ -174,14 +167,15 @@ public class Main {
             hittaBilligasteIntervallet(totalPriser,chargingHour,intervallMinuter);
 
         } else {
+           
 
             if (isSorted) {
-                priserForDisplay.sort(Comparator.comparingDouble(ElpriserAPI.Elpris::sekPerKWh));
+                dagensPriser.sort(Comparator.comparingDouble(ElpriserAPI.Elpris::sekPerKWh));
             }
-            visaPriser(priserForDisplay);
+            visaPriser(dagensPriser);
             System.out.println("--------------------------------------------------------");
-            beräknaMedelpris(priserForDisplay);
-            hittaBilligasteOchDyrasteTimme(priserForDisplay);
+            beräknaMedelpris(dagensPriser);
+            hittaBilligasteOchDyrasteTimme(dagensPriser);
         }
 
     }
