@@ -100,7 +100,7 @@ public class Main {
                             date = LocalDate.parse(args[i + 1]);
                             i++;
                         }catch (DateTimeParseException e)
-                        {throw new IllegalArgumentException("ogiltigt datumformat, använd YYY-MM-SS.");
+                        {throw new IllegalArgumentException("ogiltigt datumformat, använd YYYY-MM-DD.");
                     }
                     }else {
                         throw new IllegalArgumentException("saknar värde för --date");
@@ -288,7 +288,7 @@ public class Main {
 
     
     public static void hittaBilligasteIntervallet(List<ElpriserAPI.Elpris> priser, int timmar, int intervallMinuter) {
- //timmar*60 /intervallet är antaletpunkter
+ //timmar*60 /intervallet är antalet punkter
         int antalPrispunkter=(timmar*60)/intervallMinuter;
 
         if (priser.size() < antalPrispunkter) {
